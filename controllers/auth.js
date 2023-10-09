@@ -1,35 +1,34 @@
 const express = require('express');
 const { validationResult } = require('express-validator');
+const User = require('../models/user');
 
-const createUser = (req, res = express.response) => {
 
-    const { name, email, password } = req.body;
+const createUser = async(req, res = express.response) => {
+    // const { name, email, password } = req.body; // post(req.body) from the user in the front-end
+    try {
+        const user = new User(req.body)
 
-    // manejo de errores
+        await user.save();
 
-    const errors = validationResult( req );
-
-    if ( !errors.isEmpty()) {
-        return res.status(400).json({
+        res.status(201).json({
+            success: true,
+            msg: 'registro',
+        })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
             success: false,
-            errors: errors.mapped()
-        });
+            msg: 'Please contact the administrator'
+        })
     }
 
-    res.json({
-        success: true,
-        msg: 'registro',
-        name,
-        email,
-        password
-    })
 }
 
 const userLogin = (req, res = express.response) => {
 
     const { email, password } = req.body;
 
-    res.json({
+    res.status(201).json({
         success: true,
         msg: 'login',
         email,
