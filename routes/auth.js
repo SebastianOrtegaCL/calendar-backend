@@ -9,7 +9,7 @@ const { check } = require('express-validator')
 const { validateFields } = require('../middlewares/validateFields');
 const { createUser, userLogin, revalidateToken } = require('../controllers/auth');
 const router = Router();
-
+//post
 router.post('/new', 
     [   //middlewares
         check('name', 'The name is required').not().isEmpty(),
@@ -18,7 +18,7 @@ router.post('/new',
         validateFields
     ],
     createUser)
-
+// post
 router.post('/', 
     [// middlewares 
     check('email', 'The email is required').isEmail(),
@@ -26,7 +26,7 @@ router.post('/',
     validateFields
     ], 
     userLogin)
-
+// get
 router.get('/renew', revalidateToken)
 
 module.exports = router;
