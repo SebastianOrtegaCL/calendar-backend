@@ -4,19 +4,31 @@
  */
 const { Router} = require('express');
 const { validateJWT } = require('../middlewares/validateJWT')
-const { getEvent, createEvent, updateEvent } = require('../controllers/events');
-
+const { getEvent, createEvent, updateEvent, deleteEvent } = require('../controllers/events');
+const { check } = require('express-validator');
+const {validateFields} = require("../middlewares/validateFields");
 // Implement JWT authentication
-// Obtener eventos
+
 const router = Router();
-// validateJWT => middleware
-router.get('/', validateJWT, getEvent);
+// validateJWT => middleware, Todas las rutas deben pasar por el middleware de validateJWT
+router.use(validateJWT);
+// Obtener eventos
+router.get('/', getEvent);
 
-router.post('/', validateJWT, createEvent);
+//TODO: put toDate() in 'notes' field when backend get an date
+router.post('/',
+    [
+        check('title', 'The title is required').not().isEmpty().isString(),
+        check('notes', 'The notes is required').not().isEmpty(),
+        check('start', 'The start date is required').not().isEmpty(),
+        check('end', 'The end date is required').not().isEmpty(),
+        validateFields
+    ]
+    ,createEvent);
 
-router.put('/', validateJWT, updateEvent);
+router.put('/:id', updateEvent);
 
-// router.delete('/', deleteEvent);
+router.delete('/:id', deleteEvent);
 
 
 module.exports = router;

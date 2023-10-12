@@ -1,4 +1,5 @@
 const { response} = require('express');
+const EventSchema = require('../models/event');
 
 //
 // {
@@ -14,14 +15,16 @@ const getEvent = (req, res = response) => {
 }
 
 const createEvent = (req, res = response) => {
+    // verify th
+    const { title, start, end } = req.body
 
-    const { name, content } = req.body
-    console.log(req.body);
+    if (req.body) {
 
+    }
     res.status(200).json({
         success: true,
         msg: 'Event created',
-        name, content
+        title, start, end
 
     })
 }
