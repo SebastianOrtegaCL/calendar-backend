@@ -86,10 +86,13 @@ const userLogin = async(req, res = express.response) => {
     }
 }
 
-const revalidateToken = (req, res = express.response) => {
+const revalidateToken = async (req, res = express.response) => {
+    const { uid, name } = req
+    // Generate a new token JWT
+    const token = await generateJWT(uid, name);
     res.json({
         success: true,
-        msg: 'renew',
+        token
     })
 }
 

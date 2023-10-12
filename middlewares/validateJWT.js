@@ -1,6 +1,7 @@
 const { response } = require('express');
 const jwt = require('jsonwebtoken');
 
+
 const validateJWT = (req, res = response, next) => {
     // x-token headers
     const token = req.header('x-token');
@@ -13,8 +14,9 @@ const validateJWT = (req, res = response, next) => {
     }
 
     try {
-        const payload = jwt.verify(token, process.env.SECRET_JWT_SEED)
-        console.log(payload);
+        const { uid, name } = jwt.verify(token, process.env.SECRET_JWT_SEED)
+        req.uid = uid;
+        req.name = name;
     } catch (err) {
         return res.status(401).json({
             success: false,
