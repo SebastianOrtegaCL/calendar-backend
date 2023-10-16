@@ -7,6 +7,7 @@ const { validateJWT } = require('../middlewares/validateJWT')
 const { getEvent, createEvent, updateEvent, deleteEvent } = require('../controllers/events');
 const { check } = require('express-validator');
 const {validateFields} = require("../middlewares/validateFields");
+const { isDate } = require('../helpers/isDate');
 // Implement JWT authentication
 
 const router = Router();
@@ -20,8 +21,8 @@ router.post('/',
     [
         check('title', 'The title is required').not().isEmpty().isString(),
         check('notes', 'The notes is required').not().isEmpty(),
-        check('start', 'The start date is required').not().isEmpty(),
-        check('end', 'The end date is required').not().isEmpty(),
+        check('startDate', 'The start date is required').custom(isDate),
+        check('endDate', 'The end date is required').custom(isDate),
         validateFields
     ]
     ,createEvent);

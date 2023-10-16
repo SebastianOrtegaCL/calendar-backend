@@ -87,6 +87,8 @@ const userLogin = async(req, res = express.response) => {
 }
 
 const revalidateToken = async (req, res = express.response) => {
+    // get req from header (header x-token : ...
+    // uid and name req, are from x-token
     const { uid, name } = req
     // Generate a new token JWT
     const token = await generateJWT(uid, name);
