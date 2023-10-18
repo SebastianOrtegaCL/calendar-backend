@@ -55,15 +55,29 @@ const createEvent = async (req, res = response) => {
 
 const updateEvent = async (req, res) => {
     const eventId = req.params.id;
+    const uid = req.uid;
     try{
         const checkEvent = await EventSchema.findById( eventId );
         if( !checkEvent ) {
-            res.status(404).json({
+            return res.status(404).json({
                 success: false,
-                msg: '404'
+                msg: '404, please try again'
             })
         }
-        const eventUpdated = await EventSchema.findByIdAndUpdate(eventId, req.body);
+
+        if( checkEvent.user.toString() !== uid){
+            return res.status(404).json({
+                success: false,
+                msg: 'You are not allowed to access this'
+            })
+        }
+
+        const newEvent = {
+            ...req.body,
+            user: uid
+        }
+
+        const eventUpdated = await EventSchema.findByIdAndUpdate(eventId, newEvent, { new: true });
 
         res.status(200).json({
             success: true,
@@ -76,19 +90,42 @@ const updateEvent = async (req, res) => {
             msg: 'Contact with the admin',
         })
     }
-
-
 };
 
-const deleteEvent = (req, res) => {
-    const { uid } = req.body
+const deleteEvent = async (req, res) => {
+    const eventId = req.params.id;
+    const uid = req.uid;
 
-    res.status(200).json({
-        success: true,
-        msg: 'Note deleted',
-        uid
-    })
+    try {
+        const checkEvent = await EventSchema.findById(eventId);
+        if (!checkEvent) {
+            return res.status(404).json({
+                success: false,
+                msg: '404, please try again'
+            })
+        }
 
+        if (checkEvent.user.toString() !== uid) {
+            return res.status(401).json({
+                success: false,
+                msg: 'No tiene privilegios de eliminar este evento'
+            })
+        }
+
+        const deleteEvent = await EventSchema.findByIdAndDelete(eventId);
+
+        res.status(202).json({
+            success: true,
+            msg: 'Deleted'
+        })
+
+    }catch( err ) {
+        console.log(err);
+        res.status(500).json({
+            success: false,
+            msg: 'Please contact with the administrator'
+        })
+    }
 };
 
 module.exports = {
